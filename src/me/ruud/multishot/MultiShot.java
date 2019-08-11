@@ -15,6 +15,7 @@ import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,9 +53,25 @@ public class MultiShot extends JavaPlugin implements Listener, CommandExecutor {
 
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("skillShots").replaceAll("\\{skillshot}", config.getString(shotType.get(uuid)))));
 
-        for (int i = 0; i < amount; i++) {
+        int finalAmount = amount;
+
+        new BukkitRunnable()
+        {
+            int i = 0;
+            @Override
+            public void run() {
+                if (i == finalAmount) {
+                    this.cancel();
+                    return;
+                }
+                player.launchProjectile(Arrow.class);
+                i++;
+
+            }
+        }.runTaskTimer(this, 0, config.getInt("delay"));
+        /*for (int i = 0; i < amount; i++) {
             player.launchProjectile(Arrow.class);
-        }
+        }*/
 
         for (ItemStack arrow : arrowStacks) {
             if (amount > arrow.getAmount()) {
