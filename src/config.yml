@@ -1,7 +1,7 @@
-double: "double shots"
-triple: "triple shots"
-skillShots: "&cYou performed {skillshot}."
-notEnoughArrows: "&cYou don't have enough arrows to perform this skill."
-notMetSkill: "&cYou haven't unlock Triple Shot skill."
-switchSkill: "&eYou have switch to {skillshot} skill."
+double: double shots
+triple: triple shots
+skillShots: '&cYou performed {skillshot}.'
+notEnoughArrows: '&cYou don''t have enough arrows to perform {skillshot}.'
+notMetSkill: '&cYou haven''t unlock {skillshot} skill.'
+switchSkill: '&eYou have switch to {skillshot} skill.'
 delay: 5

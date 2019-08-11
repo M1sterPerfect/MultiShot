@@ -90,6 +90,10 @@ public class MultiShot extends JavaPlugin implements Listener, CommandExecutor {
         if (event.getEntity() instanceof Player && event.getProjectile() instanceof Arrow) {
             Player player = (Player) event.getEntity();
             String uuid = player.getUniqueId().toString();
+            shotType.putIfAbsent(uuid, "single");
+            if (shotType.get(uuid).equals("single")) {
+                return;
+            }
             if (isSneaking.get(uuid) != null && isSneaking.get(uuid)) {
                 ArrayList<ItemStack> arrowStacks = new ArrayList<>();
                 int totalAmountOfArrows = 0;
@@ -107,7 +111,6 @@ public class MultiShot extends JavaPlugin implements Listener, CommandExecutor {
                     }
                 }
 
-                shotType.putIfAbsent(uuid, "double");
                 if (shotType.get(uuid).equals("double") && player.hasPermission("multishot.skills.double")) {
                     shootArrows(player, totalAmountOfArrows, 2, arrowStacks, event);
                 } else if (shotType.get(uuid).equals("triple") && player.hasPermission("multishot.skills.triple")) {
@@ -128,14 +131,16 @@ public class MultiShot extends JavaPlugin implements Listener, CommandExecutor {
         if (args.length == 1) {
             Player player = (Player) sender;
             switch (args[0]) {
+                case "single":
+                    shotType.put(player.getUniqueId().toString(), "single");
+                    return true;
                 case "double":
                     if (player.hasPermission("multishot.skills.double")) {
                         shotType.put(player.getUniqueId().toString(), "double");
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&',
                                 config.getString("switchSkill").replaceAll("\\{skillshot}", config.getString("double"))));
-                    }
-                    //else
-                        //player.sendMessage("§cYou don't have permission to use this command!");
+                    } else
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("notMetSkill").replaceAll("\\{skillshot}", config.getString("double"))));
                     return true;
                 case "triple":
                     if (player.hasPermission("multishot.skills.triple")) {
@@ -143,7 +148,7 @@ public class MultiShot extends JavaPlugin implements Listener, CommandExecutor {
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&',
                                 config.getString("switchSkill").replaceAll("\\{skillshot}", config.getString("triple"))));
                     } else
-                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("notMetSkill")));
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("notMetSkill").replaceAll("\\{skillshot}", config.getString("triple"))));
                     return true;
             }
         }
