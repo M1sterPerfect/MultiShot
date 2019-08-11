@@ -9,6 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityShootBowEvent;
@@ -16,6 +17,7 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,14 +66,13 @@ public class MultiShot extends JavaPlugin implements Listener, CommandExecutor {
                     this.cancel();
                     return;
                 }
-                player.launchProjectile(Arrow.class);
+                Projectile projectile = player.launchProjectile(Arrow.class);
+                projectile.setBounce(false);
+                projectile.setVelocity(projectile.getVelocity().add(new Vector(0, i * 0.2, 0)));
                 i++;
 
             }
         }.runTaskTimer(this, 0, config.getInt("delay"));
-        /*for (int i = 0; i < amount; i++) {
-            player.launchProjectile(Arrow.class);
-        }*/
 
         for (ItemStack arrow : arrowStacks) {
             if (amount > arrow.getAmount()) {
@@ -128,15 +129,20 @@ public class MultiShot extends JavaPlugin implements Listener, CommandExecutor {
             Player player = (Player) sender;
             switch (args[0]) {
                 case "double":
-                    if (player.hasPermission("multishot.skills.double"))
+                    if (player.hasPermission("multishot.skills.double")) {
                         shotType.put(player.getUniqueId().toString(), "double");
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                                config.getString("switchSkill").replaceAll("\\{skillshot}", config.getString("double"))));
+                    }
                     //else
                         //player.sendMessage("§cYou don't have permission to use this command!");
                     return true;
                 case "triple":
-                    if (player.hasPermission("multishot.skills.triple"))
+                    if (player.hasPermission("multishot.skills.triple")) {
                         shotType.put(player.getUniqueId().toString(), "triple");
-                    else
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                                config.getString("switchSkill").replaceAll("\\{skillshot}", config.getString("triple"))));
+                    } else
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("notMetSkill")));
                     return true;
             }
