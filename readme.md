@@ -4,5 +4,5 @@ This plugin adds the ability to shoot multiple arrows with one shot by sneaking 
 ## Permissions
 |Permission|Description|
 |----------|-----------|
-|`multishot.skills.double`|Permits to use the /multishot double command|
-|`multishot.skills.triple`|Permits to use the /multishot triple command|
+|`multishot.skills.double`|Permits to shoot double arrows and usage of /multishot double command|
+|`multishot.skills.triple`|Permits to shoot triple arrows and usage of /multishot triple command|
