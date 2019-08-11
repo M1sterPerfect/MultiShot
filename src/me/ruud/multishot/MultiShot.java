@@ -39,7 +39,7 @@ public class MultiShot extends JavaPlugin implements Listener, CommandExecutor {
 
     }
 
-    private void shootArrows(Player player, int totalAmountOfArrows, int amount, ArrayList<ItemStack> arrowStacks) {
+    private void shootArrows(Player player, int totalAmountOfArrows, int amount, ArrayList<ItemStack> arrowStacks, EntityShootBowEvent event) {
         String uuid = player.getUniqueId().toString();
 
         if (totalAmountOfArrows < amount) {
@@ -47,6 +47,8 @@ public class MultiShot extends JavaPlugin implements Listener, CommandExecutor {
             player.updateInventory();
             return;
         }
+
+        event.setCancelled(true);
 
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("skillShots").replaceAll("\\{skillshot}", config.getString(shotType.get(uuid)))));
 
@@ -71,8 +73,6 @@ public class MultiShot extends JavaPlugin implements Listener, CommandExecutor {
             Player player = (Player) event.getEntity();
             String uuid = player.getUniqueId().toString();
             if (isSneaking.get(uuid) != null && isSneaking.get(uuid)) {
-                event.setCancelled(true);
-
                 ArrayList<ItemStack> arrowStacks = new ArrayList<>();
                 int totalAmountOfArrows = 0;
                 ItemStack offHand = null;
@@ -90,10 +90,10 @@ public class MultiShot extends JavaPlugin implements Listener, CommandExecutor {
                 }
 
                 shotType.putIfAbsent(uuid, "double");
-                if (shotType.get(uuid).equals("double")) {
-                    shootArrows(player, totalAmountOfArrows, 2, arrowStacks);
-                } else if (shotType.get(uuid).equals("triple")) {
-                    shootArrows(player, totalAmountOfArrows, 3, arrowStacks);
+                if (shotType.get(uuid).equals("double") && player.hasPermission("multishot.skills.double")) {
+                    shootArrows(player, totalAmountOfArrows, 2, arrowStacks, event);
+                } else if (shotType.get(uuid).equals("triple") && player.hasPermission("multishot.skills.triple")) {
+                    shootArrows(player, totalAmountOfArrows, 3, arrowStacks, event);
                 }
             }
 
@@ -113,14 +113,14 @@ public class MultiShot extends JavaPlugin implements Listener, CommandExecutor {
                 case "double":
                     if (player.hasPermission("multishot.skills.double"))
                         shotType.put(player.getUniqueId().toString(), "double");
-                    else
-                        player.sendMessage("§cYou don't have permission to use this command!");
+                    //else
+                        //player.sendMessage("§cYou don't have permission to use this command!");
                     return true;
                 case "triple":
                     if (player.hasPermission("multishot.skills.triple"))
                         shotType.put(player.getUniqueId().toString(), "triple");
-                    else
-                        player.sendMessage("§cYou don't have permission to use this command!");
+                    //else
+                        //player.sendMessage("§cYou don't have permission to use this command!");
                     return true;
             }
         }
