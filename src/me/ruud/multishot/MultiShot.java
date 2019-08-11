@@ -119,8 +119,8 @@ public class MultiShot extends JavaPlugin implements Listener, CommandExecutor {
                 case "triple":
                     if (player.hasPermission("multishot.skills.triple"))
                         shotType.put(player.getUniqueId().toString(), "triple");
-                    //else
-                        //player.sendMessage("§cYou don't have permission to use this command!");
+                    else
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("notMetSkill")));
                     return true;
             }
         }
