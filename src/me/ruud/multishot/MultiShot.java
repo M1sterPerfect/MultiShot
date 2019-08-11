@@ -21,12 +21,16 @@ import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 
 public class MultiShot extends JavaPlugin implements Listener, CommandExecutor {
 
     private HashMap<String, Boolean> isSneaking = new HashMap<>();
     private HashMap<String, String> shotType = new HashMap<>();
+    private HashMap<String, Long> cooldown = new HashMap<>();
     private FileConfiguration config = getConfig();
+    private Random random = new Random();
 
     @Override
     public void onEnable() {
@@ -45,16 +49,24 @@ public class MultiShot extends JavaPlugin implements Listener, CommandExecutor {
     private void shootArrows(Player player, int totalAmountOfArrows, int amount, ArrayList<ItemStack> arrowStacks, EntityShootBowEvent event) {
         String uuid = player.getUniqueId().toString();
 
+        if (config.getBoolean("cooldownEnable")) {
+            if (cooldown.containsKey(uuid) && System.currentTimeMillis() - cooldown.get(uuid) < config.getInt("cooldown") * 1000) {
+                long timeLeft = config.getInt("cooldown") * 1000 - (System.currentTimeMillis() - cooldown.get(uuid));
+                sendMessage(player, "cooldownMSG",  new String[][] {{"\\{skillshot}", config.getString(shotType.get(uuid))},
+                                                                                {"\\{cooldown}", String.valueOf(timeLeft / 1000 + 1)}});
+                return;
+            }
+        }
+
         if (totalAmountOfArrows < amount) {
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("notEnoughArrows")).replaceAll("\\{skillshot}", config.getString(shotType.get(uuid))));
+            sendMessage(player, "notEnoughArrows", new String[][] {{"\\{skillshot}", config.getString(shotType.get(uuid))}});
             player.updateInventory();
             return;
         }
 
         event.setCancelled(true);
 
-        player.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("skillShots").replaceAll("\\{skillshot}", config.getString(shotType.get(uuid)))));
-
+        sendMessage(player, "skillShots", new String[][] {{"\\{skillshot}", config.getString(shotType.get(uuid))}});
         int finalAmount = amount;
 
         new BukkitRunnable()
@@ -68,11 +80,15 @@ public class MultiShot extends JavaPlugin implements Listener, CommandExecutor {
                 }
                 Projectile projectile = player.launchProjectile(Arrow.class);
                 projectile.setBounce(false);
-                projectile.setVelocity(projectile.getVelocity().add(new Vector(0, i * 0.2, 0)));
+                if (event.getForce() == 1.0)
+                    ((Arrow) projectile).setCritical(true);
+                projectile.setVelocity(projectile.getVelocity().add(new Vector((random.nextDouble() / 5) * (random.nextBoolean() ? -1 : 1), (random.nextDouble() / 5) * (random.nextBoolean() ? -1 : 1), (random.nextDouble() / 5) * (random.nextBoolean() ? -1 : 1))));
                 i++;
 
             }
         }.runTaskTimer(this, 0, config.getInt("delay"));
+
+        cooldown.put(uuid, System.currentTimeMillis());
 
         for (ItemStack arrow : arrowStacks) {
             if (amount > arrow.getAmount()) {
@@ -121,6 +137,14 @@ public class MultiShot extends JavaPlugin implements Listener, CommandExecutor {
         }
     }
 
+    private void sendMessage(Player player, String configString, String[][] replacements) {
+        String message = config.getString(configString);
+        for (String[] replacement : replacements) {
+            message = message.replaceAll(replacement[0], replacement[1]);
+        }
+        player.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+    }
+
     @EventHandler
     public void onSneak(PlayerToggleSneakEvent event) {
         isSneaking.put(event.getPlayer().getUniqueId().toString(), event.isSneaking());
@@ -133,22 +157,21 @@ public class MultiShot extends JavaPlugin implements Listener, CommandExecutor {
             switch (args[0]) {
                 case "single":
                     shotType.put(player.getUniqueId().toString(), "single");
+                    sendMessage(player, "switchSkill", new String[][] {{"\\{skillshot}", config.getString("single")}});
                     return true;
                 case "double":
                     if (player.hasPermission("multishot.skills.double")) {
                         shotType.put(player.getUniqueId().toString(), "double");
-                        player.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                                config.getString("switchSkill").replaceAll("\\{skillshot}", config.getString("double"))));
+                        sendMessage(player, "switchSkill", new String[][] {{"\\{skillshot}", config.getString("double")}});
                     } else
-                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("notMetSkill").replaceAll("\\{skillshot}", config.getString("double"))));
+                        sendMessage(player, "notMetSkill", new String[][] {{"\\{skillshot}", config.getString("double")}});
                     return true;
                 case "triple":
                     if (player.hasPermission("multishot.skills.triple")) {
                         shotType.put(player.getUniqueId().toString(), "triple");
-                        player.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                                config.getString("switchSkill").replaceAll("\\{skillshot}", config.getString("triple"))));
+                        sendMessage(player, "switchSkill", new String[][] {{"\\{skillshot}", config.getString("triple")}});
                     } else
-                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("notMetSkill").replaceAll("\\{skillshot}", config.getString("triple"))));
+                        sendMessage(player, "notMetSkill", new String[][] {{"\\{skillshot}", config.getString("triple")}});
                     return true;
             }
         }
