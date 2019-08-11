@@ -1,0 +1,17 @@
+name: MultiShot
+version: 0.0.1
+author: xX4w3s0m3Xx
+main: me.ruud.multishot.MultiShot
+commands:
+  multishot:
+    aliases:
+      - ms
+    description: MultiShot commands
+    usage: |
+      /<command> double - turns on double shot mode
+      /<command> triple - turns on triple shot mode
+permissions:
+  multishot.skills.double:
+    description: "Permits to use the /multishot double command"
+  multishot.skills.triple:
+    description: "Permits to use the /multishot triple command"

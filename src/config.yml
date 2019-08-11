@@ -1,0 +1,4 @@
+double: "double shots"
+triple: "triple shots"
+skillShots: "&cYou performed {skillshot}."
+notEnoughArrows: "&cYou don't have enough arrows to perform this skill."
