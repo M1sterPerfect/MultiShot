@@ -21,9 +21,9 @@ import java.util.Random;
 public class Listeners implements Listener {
 
     private MultiShot plugin;
-    public HashMap<String, Long> cooldown = new HashMap<>();
+    private HashMap<String, Long> cooldown = new HashMap<>();
     private HashMap<String, Boolean> isSneaking = new HashMap<>();
-    public Random random = new Random();
+    private Random random = new Random();
 
     public Listeners(MultiShot plugin) {
         this.plugin = plugin;
@@ -70,11 +70,11 @@ public class Listeners implements Listener {
                     this.cancel();
                     return;
                 }
-                Projectile projectile = player.launchProjectile(Arrow.class);
-                projectile.setBounce(false);
+                Arrow arrow = player.launchProjectile(Arrow.class);
+                arrow.setBounce(false);
                 if (event.getForce() == 1.0)
-                    ((Arrow) projectile).setCritical(true);
-                projectile.setVelocity(projectile.getVelocity().add(new Vector((random.nextDouble() / 5) * (random.nextBoolean() ? -1 : 1), (random.nextDouble() / 5) * (random.nextBoolean() ? -1 : 1), (random.nextDouble() / 5) * (random.nextBoolean() ? -1 : 1))));
+                    arrow.setCritical(true);
+                arrow.setVelocity(arrow.getVelocity().add(new Vector((random.nextDouble() / 5) * (random.nextBoolean() ? -1 : 1), (random.nextDouble() / 5) * (random.nextBoolean() ? -1 : 1), (random.nextDouble() / 5) * (random.nextBoolean() ? -1 : 1))));
                 i++;
 
             }
