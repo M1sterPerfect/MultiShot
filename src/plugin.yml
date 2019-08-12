@@ -12,6 +12,6 @@ commands:
       /<command> triple - turns on triple shot mode
 permissions:
   multishot.skills.double:
-    description: "Permits to use the /multishot double command"
+    description: "Permits to use the multishot double mode"
   multishot.skills.triple:
-    description: "Permits to use the /multishot triple command"
+    description: "Permits to use the multishot triple mode"
