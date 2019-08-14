@@ -11,3 +11,4 @@ cooldownEnable: true
 cooldownMSG: "&cYou are too tired to use {skillshot} again. &e{cooldown}s"
 #default 10 seconds cooldown, in seconds
 cooldown: 10
+refreshedMSG: '&eYour {skillshot} ability is refreshed!'

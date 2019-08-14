@@ -1,5 +1,6 @@
 package me.ruud.multishot;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
@@ -9,6 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -81,6 +83,9 @@ public class Listeners implements Listener {
         }.runTaskTimer(plugin, 0,  plugin.config.getInt("delay"));
 
         cooldown.put(uuid, System.currentTimeMillis());
+        new ReadyMessage(plugin, player).runTaskLater(plugin,(long) (plugin.config.getInt("cooldown") / 0.05));
+
+
 
         for (ItemStack arrow : arrowStacks) {
             if (amount > arrow.getAmount()) {
@@ -94,12 +99,16 @@ public class Listeners implements Listener {
     }
 
     @EventHandler
+    public void onJoin(PlayerJoinEvent event) {
+        plugin.shotType.put(event.getPlayer().getUniqueId().toString(), "single");
+    }
+
+    @EventHandler
     public void onBowShot(EntityShootBowEvent event) {
         if (event.getEntity() instanceof Player && event.getProjectile() instanceof Arrow) {
             Player player = (Player) event.getEntity();
             String uuid = player.getUniqueId().toString();
-            plugin.shotType.putIfAbsent(uuid, "single");
-            if ( plugin.shotType.get(uuid).equals("single")) {
+            if (plugin.shotType.get(uuid).equals("single")) {
                 return;
             }
             if (isSneaking.get(uuid) != null && isSneaking.get(uuid)) {
@@ -136,10 +145,9 @@ public class Listeners implements Listener {
                 && isSneaking.get(player.getUniqueId().toString()) != null
                 && isSneaking.get(player.getUniqueId().toString())
                 && player.getInventory().getItemInMainHand().getType() == Material.BOW) {
-            plugin.shotType.putIfAbsent(player.getUniqueId().toString(), "single");
-            String multiShot =  plugin.shotType.get(player.getUniqueId().toString());
-            while (!player.hasPermission("multishot.skills." + (multiShot = getNext(multiShot))) && !multiShot.equalsIgnoreCase("single")) {
-                multiShot = getNext(plugin.shotType.get(player.getUniqueId().toString()));
+            String multiShot =  getNext(plugin.shotType.get(player.getUniqueId().toString()));
+            while (!player.hasPermission("multishot.skills." + multiShot) && !multiShot.equalsIgnoreCase("single")) {
+                multiShot = getNext(multiShot);
             }
             plugin.shotType.put(player.getUniqueId().toString(), multiShot);
             plugin.messageHandler.sendMessage(player, "switchSkill", new String[][] {{"\\{skillshot}",  plugin.config.getString(multiShot)}});
