@@ -1,0 +1,12 @@
+abilities:
+  doubleShot:
+    name: "double shot"
+    arrows: 2
+
+  tripleShot:
+    name: "triple shot"
+    arrows: 3
+
+  quintupleShot:
+    name: "quint shot"
+    arrows: 5

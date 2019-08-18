@@ -1,14 +1,4 @@
-single: single shots
-double: double shots
-triple: triple shots
-skillShots: '&cYou performed {skillshot}.'
-notEnoughArrows: '&cYou don''t have enough arrows to perform {skillshot}.'
-notMetSkill: '&cYou haven''t unlock {skillshot} skill.'
-switchSkill: '&eYou have switch to {skillshot} skill.'
-#delay in ticks
-delay: 5
-cooldownEnable: true
-cooldownMSG: "&cYou are too tired to use {skillshot} again. &e{cooldown}s"
-#default 10 seconds cooldown, in seconds
+delayBetweenShots: 10
+cooldownEnabled: true
 cooldown: 10
-refreshedMSG: '&eYour {skillshot} ability is refreshed!'
+defaultAbility: default

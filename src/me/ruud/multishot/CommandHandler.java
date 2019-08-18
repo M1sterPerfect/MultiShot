@@ -16,27 +16,29 @@ public class CommandHandler implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (args.length == 1) {
-            Player player = (Player) sender;
-            switch (args[0]) {
-                case "single":
-                    plugin.shotType.put(player.getUniqueId().toString(), "single");
-                    plugin.messageHandler.sendMessage(player, "switchSkill", new String[][] {{"\\{skillshot}", plugin.config.getString("single")}});
-                    return true;
-                case "double":
-                    if (player.hasPermission("multishot.skills.double")) {
-                        plugin.shotType.put(player.getUniqueId().toString(), "double");
-                        plugin.messageHandler.sendMessage(player, "switchSkill", new String[][] {{"\\{skillshot}", plugin.config.getString("double")}});
-                    } else
-                        plugin.messageHandler.sendMessage(player, "notMetSkill", new String[][] {{"\\{skillshot}", plugin.config.getString("double")}});
-                    return true;
-                case "triple":
-                    if (player.hasPermission("multishot.skills.triple")) {
-                        plugin.shotType.put(player.getUniqueId().toString(), "triple");
-                        plugin.messageHandler.sendMessage(player, "switchSkill", new String[][] {{"\\{skillshot}", plugin.config.getString("triple")}});
-                    } else
-                        plugin.messageHandler.sendMessage(player, "notMetSkill", new String[][] {{"\\{skillshot}", plugin.config.getString("triple")}});
-                    return true;
+            MSPlayer player = plugin.players.get((Player) sender);
+
+            if ("default".equals(args[0])) {
+                Ability ability = Ability.get(plugin.config.getString("defaultAbility"));
+                player.setCurrentAbility(ability);
+                plugin.messageHandler.sendMessage(player, "switchSkill", new String[][]{{"\\{skillshot}", ability.getDisplayName()}});
+                return true;
             }
+
+            Ability ability = Ability.get(args[0]);
+            System.out.println(args[0]);
+            if (ability == null) {
+                plugin.messageHandler.sendMessage(player, "notExisting", new String[][]{{"\\{variable}", args[0]}});
+                return true;
+            }
+
+            if (player.getPlayer().hasPermission("multishot.skills." + args[0])) {
+                player.setCurrentAbility(ability);
+                System.out.println(ability.getDisplayName());
+                plugin.messageHandler.sendMessage(player, "switchSkill", new String[][]{{"\\{skillshot}", ability.getDisplayName()}});
+            } else
+                plugin.messageHandler.sendMessage(player, "notUnlocked", new String[][]{{"\\{skillshot}", ability.getDisplayName()}});
+            return true;
         }
         return false;
     }

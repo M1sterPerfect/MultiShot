@@ -11,12 +11,12 @@ public class MessageHandler {
         this.plugin = plugin;
     }
 
-    public void sendMessage(Player player, String configString, String[][] replacements) {
-        String message = plugin.config.getString(configString);
+    public void sendMessage(MSPlayer player, String configString, String[][] replacements) {
+        String message = plugin.messages.getString(configString);
         for (String[] replacement : replacements) {
             message = message.replaceAll(replacement[0], replacement[1]);
         }
-        player.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+        player.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', message));
     }
 
 }

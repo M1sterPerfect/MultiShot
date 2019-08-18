@@ -1,0 +1,7 @@
+performSkill: "&cYou performed {skillshot}."
+notEnoughArrows: "&cYou don't have enough arrows to perform {skillshot}."
+notUnlocked: "&cYou haven't unlock {skillshot} skill."
+notExisting: "&c{variable} doesn't exist."
+switchSkill: "&eYou have switch to {skillshot} skill."
+cooldown: "&cYou are too tired to use {skillshot} again. &e{cooldown}s"
+refreshed: "&eYour {skillshot} ability is refreshed!"

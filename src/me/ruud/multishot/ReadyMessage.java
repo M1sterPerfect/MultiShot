@@ -1,20 +1,19 @@
 package me.ruud.multishot;
 
-import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class ReadyMessage extends BukkitRunnable {
 
     private MultiShot plugin;
-    private Player player;
+    private MSPlayer player;
 
-    public ReadyMessage(MultiShot plugin, Player player) {
+    public ReadyMessage(MultiShot plugin, MSPlayer player) {
         this.plugin = plugin;
         this.player = player;
     }
 
     @Override
     public void run() {
-        plugin.messageHandler.sendMessage(player, "refreshedMSG", new String[][]{{"\\{skillshot}", plugin.config.getString(plugin.shotType.get(player.getUniqueId().toString()))}});
+        plugin.messageHandler.sendMessage(player, "refreshed", new String[][]{{"\\{skillshot}", player.getCurrentAbility().getDisplayName()}});
     }
 }
