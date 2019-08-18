@@ -1,5 +1,5 @@
 name: MultiShot
-version: 1.1.0
+version: 1.1.1
 author: xX4w3s0m3Xx
 main: me.ruud.multishot.MultiShot
 commands:
@@ -8,10 +8,11 @@ commands:
       - ms
     description: MultiShot commands
     usage: |
-      /<command> double - turns on double shot mode
-      /<command> triple - turns on triple shot mode
+      /<command> [abilityname] - Switch to certain ability.
 permissions:
-  multishot.skills.double:
+  multishot.skills.doubleShot:
     description: "Permits to use the multishot double mode"
-  multishot.skills.triple:
+  multishot.skills.tripleShot:
     description: "Permits to use the multishot triple mode"
+  multishot.skills.quintupleShot:
+    description: "Permits to use the multishot quintuple mode"
